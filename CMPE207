@@ -1,0 +1,48 @@
+# Firewall Setup
+-----------------------
+int g1
+nameif inside
+ip add 172.16.10.10 255.255.255.0
+no shut
+exit
+
+int g0
+nameif outside
+ip add 200.1.1.10 255.255.255.0
+no shut
+exit
+
+
+#Create DMZ for Public Users
+--------------------------------
+int g2
+nameif dmz
+security-level 50
+ip add 192.168.10.10 255.255.255.0
+no shut
+exit
+
+
+#Static Route towards DMZ
+-------------------------------------
+route dmz 15.15.15.0 255.255.255.0 192.168.10.1
+ping 15.15.15.1
+
+#Setup Router R1
+------------------------------------
+intf0/0
+ip add 172.16.10.1 255.255.255.0
+no shut
+exit
+ip route 200.1.1.0 255.255.255.0 172.16.10.10
+do ping 200.1.1.1
+
+
+# Setup Router R2
+-------------------------------------
+intf0/0
+ip add 200.1.1.1 255.255.255.0
+no shut
+exit
+ip route 172.16.10.0 255.255.255.0 200.1.10
+
